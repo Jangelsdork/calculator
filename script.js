@@ -2,6 +2,11 @@ console.log("Yo planet")
 let digiButtonIn = 0
 let displayNum = ""
 let clearButt = ""
+let opButt = ""
+let chosenOperator = 0
+let equationArray = []
+let results = 0
+let popped = ""
 displayContent = document.querySelector("#display")
 //controls the digit of the button element that is pressed, runs it in the digit accumulator 
 
@@ -23,7 +28,8 @@ operatorButtons.addEventListener('click', function () {
     if (!isButton) {
         return;
     }
-    console.dir(event.target.id);
+    opButt = (event.target.id);
+    digitAccumulator(opButt)
 })
 
 // listens for the "clear" button 
@@ -37,39 +43,19 @@ clearButton.addEventListener('click', function () {
     digitAccumulator(clearButt);
 })
 
-// adds two arguments
-function sum(){
-    return arguments[0] + arguments[1];
-}
-
-// subtracts the second argument from the first 
-function subtract(){
-    return arguments[0] - arguments[1];
-}
-
-// multiplies two arguments 
-function multiply(){
-    return arguments[0] * arguments[1];
-}
-
-// divides the first argument by the second 
-function divide(){
-    return arguments[0] / arguments[1];
-}
-
 // selects which operator to use
-function operate(){
-    if (arguments[1] == "+"){
-        return sum(arguments[0], arguments[2])
+function operate(argument){
+    if (argument[1] === "sum"){
+        return (argument[0] + argument[2])
     }
-    else if (arguments[1] == "-"){
-        return subtract(arguments[0], arguments[2])
+    else if (argument[1] == "sub"){
+        return (argument[0] - argument[2])
     }
-    else if (arguments[1] == "*"){
-        return multiply(arguments[0], arguments[2])
+    else if (argument[1] == "mul"){
+        return (argument[0] * argument[2])
     }
-    else if (arguments[1] == "/"){
-        return divide(arguments[0], arguments[2])
+    else if (argument[1] == "divi"){
+        return (argument[0] / argument[2])
     }
 }
 
@@ -78,16 +64,44 @@ function operate(){
 
 function digitAccumulator(x) {
     //if digit then add to the stack of digits stored in a string & update the div 
-    if (Number.isInteger(x)){
+    if (Number.isInteger(x)){ 
         displayNum = displayNum + x
         displayContent.textContent = `${displayNum}`
-        return displayNum
+        console.log(equationArray)
     }
     else if (x === "clear"){
         displayNum = ""
-        displayContent.textContent = "0"
+        displayContent.textContent = "0";
+        equationArray = [];
     }
-    //else if +-*/ run respective function  
+    else if (x === "sum" || "sub" || "mul" || "divi" || "equ"){
+        console.log("clicked" + x)
+        if (equationArray.length === 0){
+            equationArray[0] = parseInt(displayNum)
+            equationArray[1] = x
+            displayNum = ""
+        }
+        else if (equationArray.length === 1){
+            equationArray[1] = x;
+            console.log(equationArray)
+        }
+        else if (equationArray.length === 2){
+            equationArray[2] = parseInt(displayNum);
+            results = operate(equationArray);
+            displayNum = results;
+            displayContent.textContent = `${displayNum}`;
+            displayNum = "";
+            equationArray.length = 0
+            equationArray = [];
+            equationArray[0] = parseInt(results);
+            console.log(equationArray) // somewhere here, nan  is added as second item in array 
+            if (x !== "equ"){
+                equationArray[1] = x
+            }
+        }
+
+    }
+    
 }
 
 
